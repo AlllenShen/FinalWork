@@ -9,6 +9,7 @@ using std::vector;
 
 void FirstLine();
 int handle(string cmd);
+void help();
 class GOODS
 {
 private:
@@ -36,6 +37,7 @@ public:
 	vector<GOODS>::const_iterator * find(int index_) const; //·µ»Øµü´úÆ÷Ö¸Õë
 	void show(int begin) const;
 	void add();
+	void add(string name_, int price_, int index_);
 	void change();
 	void change(GOODS good);
 	void delet();
@@ -67,7 +69,6 @@ public:
 	void cancel(int index_, int num_);
 	void finish() const;
 };
-
 class ENGINE
 {
 private:

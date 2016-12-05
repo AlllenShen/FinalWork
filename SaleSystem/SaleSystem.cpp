@@ -12,10 +12,10 @@ const int SHOW_LEN = 10;
 
 void FirstLine() //输出标题行
 { 
-	cout << "Index" << setw(8)
-		<< "Name" << setw(8)
-		<< "Price" << setw(8)
-		<< "Number" << setw(8) << endl;
+	cout << setw(8) << "Index"
+		<< setw(8) << "Name"
+		<< setw(8) << "Price"
+		<< setw(8) << "Number"  << endl;
 }
 int handle(string cmd)
 {
@@ -35,8 +35,14 @@ int handle(string cmd)
 		return 7;
 	else if (cmd == "help")
 		return 8;
+	else if (cmd == "\n")
+		return 9;
 	else
 		return -1;
+}
+void help()
+{
+	
 }
 
 //GOODS类
@@ -54,10 +60,9 @@ GOODS::GOODS(string name_ = string('\0'), int price_ = NULL, int index_ = NULL)
 }
 void GOODS::show() const
 {
-	//cout.setf(std::ios::left);
-	cout << index << setw(8) 
-		 << name << setw(8)
-		 << price << setw(8) << endl;
+	cout << setw(8) << index
+		<< setw(8) << name
+		<< setw(8) << price  << endl;
 }
 
 //SaleGood类
@@ -70,7 +75,7 @@ SaleGood::SaleGood(const GOODS * good_ = NULL, int num_ = 0)
 void SaleGood::show() const
 {
 	(*good).show();
-	cout << num << setw(8) << endl;
+	cout << setw(8) << num  << endl;
 }
 void SaleGood::cancel(int num_ = 1)
 {
@@ -105,15 +110,10 @@ void CUSTOMER::show() const
 }
 vector<SaleGood>::iterator * CUSTOMER::find(int index_)
 {
-	/*for (int i = 0; i < BuyList.size(); i++)
-		if (index_ == BuyList[i].GetIndex)
-			return BuyList[i];*/
 	vector<SaleGood>::iterator iter = BuyList.begin();
-	while (iter != BuyList.end())
-	{
+	for (; iter != BuyList.end(); iter++)
 		if ((*iter).GetIndex() == index_)
 			return &iter;
-	}
 	return NULL;
 }
 void CUSTOMER::add(int index_, int num_)
@@ -161,15 +161,10 @@ void CUSTOMER::finish() const
 //STORE类
 vector<GOODS>::const_iterator * STORE::find(int index_) const
 {
-	/*for (int i = 0; i < GoodList.size(); i++)
-		if (index_ == GoodList[i].GetIndex)
-			return &(GoodList[i]);*/
 	vector<GOODS>::const_iterator iter = GoodList.begin();
-	while (iter != GoodList.end())
-	{
+	for (;iter != GoodList.end(); iter++)
 		if ((*iter).GetIndex() == index_)
 			return &iter;
-	}
 	return NULL;
 }
 void STORE::show(int begin) const
@@ -210,18 +205,34 @@ void STORE::add()
 	}
 	GOODS NewGood = GOODS(name_, price_, index_);
 	GoodList.push_back(NewGood);
+	cout << "New item added succesfully.\n";
+	FirstLine();
+	NewGood.show();
+}
+void STORE::add(string name_, int price_, int index_)
+{
+	if (find(index_) != NULL)
+	{
+		cout << "The index has already EXIST!\nPlease input another one:";
+		return;
+	}
+	GOODS NewGood = GOODS(name_, price_, index_);
+	GoodList.push_back(NewGood);
+	cout << "New item added succesfully.\n";
 }
 void STORE::change()
 {
 	int index_;
 	cout << "Input the index of good:";
 	cin >> index_;
-	while (find(index_) == NULL)
+	vector<GOODS>::const_iterator * f = find(index_);
+	while (f == NULL) 
 	{
 		cout << "The index DOES NOT EXIST!\nPlease input another one:";
 		cin >> index_;
+		f = find(index_);
 	}
-	GOODS g = **find(index_);
+	GOODS g = **f;//读取访问权限错误
 	FirstLine();
 	g.show();
 	cout << "Which do you want to change?\nName(n) Price(p) Index(i)\n";
@@ -313,18 +324,6 @@ void STORE::delet()
 	int index_;
 	cout << "Index:";
 	cin >> index_;
-	/*for (int i = 0; i < GoodList.size; i++)
-		if (GoodList[i].GetIndex == index_)
-		{
-			cout << "Sure to delete?(Y/N)";
-			char c;
-			cin >> c;
-			if (c == 'Y')
-				GoodList.erase(i);
-			else
-				cout << "Give up deleting.\n";
-			return;
-		}*/
 	bool flag = 0;
 	vector<GOODS>::iterator iter = GoodList.begin();
 	while (iter != GoodList.end())
@@ -354,6 +353,8 @@ void ENGINE::saler()
 			cout << "Command \"" << cmd << "\" can't be found.Type \"help\" to get help.\n";
 		if (h == 1)
 			break;
+		if (h == 9)
+			continue;
 		switch (h)
 		{
 		case 2:
@@ -379,14 +380,79 @@ void ENGINE::saler()
 }
 void ENGINE::customer()
 {
+	CUSTOMER customer = CUSTOMER(store);
+	string cmd;
+	while (1)
+	{
+		cout << "Customer$ ";
+		cin >> cmd;
+		int h = handle(cmd);
+		if (h == -1)
+			cout << "Command \"" << cmd << "\" can't be found.Type \"help\" to get help.\n";
+		if (h == 1)
+			break;
+		if (h == 9)
+			continue;
+		if (h == 7)
+		{
+			customer.finish();
+			break;
+		}
+		switch (h)
+		{
+			case 6: //show_chart
+				customer.show();
+				break;
+			case 2: //add
+			{
+				int item[20][2], i = 0; //存放选择信息
+				cout << "FORM \"Index Num\"\nType \';\' to finishi add.\n->";
+				while (cin)
+				{
+					cin >> item[i][0] >> item[i][1];
+					i++;
+				}
+				cin.clear();
+				cin.get(); //重置输入流
+				for (int j = 0; j <= i; j++)
+					customer.add(item[j][0], item[j][1]);
+				break;
+			}
+			case 5: //show_goods
+				ShowGoods();
+				break;
+			case 4: //delet
+			{
+				int item[20][2], i = 0; //存放选择信息
+				cout << "FORM \"Index Num\"\nType \';\' to finishi delet.\n->";
+				while (cin)
+				{
+					cin >> item[i][0] >> item[i][1];
+					i++;
+				}
+				cin.clear();
+				cin.get(); //重置输入流
+				for (int j = 0; j <= i; j++)
+					customer.cancel(item[j][0], item[j][1]);
+				break;
+			}
+			case 8:
+				cout << "help\n";
+				break;
+		}
+	}
 }
 void ENGINE::end() const
 {
+	FirstLine();
+	for (int i = 0; i < SaleList.size(); i++)
+		SaleList[i].show();
+	cout << "Total: " << total << endl;
 }
 void ENGINE::ShowGoods() const
 {
+	FirstLine();
 	for (int i = 0; i < store->size(); i += SHOW_LEN)
 		store->show(i);
 }
-
 
