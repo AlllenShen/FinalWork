@@ -351,6 +351,7 @@ void STORE::delet()
 	vector<GOODS>::iterator iter = GoodList.begin();
 	vector<GOODS>::const_iterator * f = find(index_);
 	GOODS comp = **f; //读取访问权限冲突 
+	//int in = **f.
 	for (; iter != GoodList.end(); iter++)
 	{
 		if (*iter == comp) //exception here 
