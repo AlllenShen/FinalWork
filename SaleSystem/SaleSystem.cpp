@@ -97,8 +97,10 @@ SaleGood::SaleGood(const GOODS * good_ = NULL, int num_ = 0)
 }
 void SaleGood::show() const
 {
-	(*good).show();
-	cout << setw(8) << num  << endl;
+	cout << setw(8) << (*good).GetIndex()
+		<< setw(8) << (*good).GetName()
+		<< setw(8) << (*good).GetPrice()
+		<< setw(8) << num  << endl;
 }
 void SaleGood::cancel(int num_ = 1)
 {
@@ -130,6 +132,7 @@ void CUSTOMER::show() const
 	FirstLine();
 	for (int i = 0; i < BuyList.size(); i++)
 		BuyList[i].show();
+	cout << "Total:" << total << endl;
 }
 vector<SaleGood>::iterator * CUSTOMER::find(int index_)
 {
@@ -143,7 +146,8 @@ void CUSTOMER::add(int index_, int num_)
 {
 	if (store->find(index_) == NULL)
 	{
-		cout << "The good DOES NOT exist!\nPlease check if index is right.\n";
+		cout << "The good \"" << index_
+			<< "\" DOES NOT exist!\nPlease check if index is right.\n";
 		return;
 	}
 	vector<SaleGood>::iterator * item = find(index_);
@@ -152,8 +156,8 @@ void CUSTOMER::add(int index_, int num_)
 		(**item).add(num_);
 		return;
 	}
-	GOODS g = **(store->find(index_)); //store_.find(index_) is a pointer to iter
-	SaleGood good = SaleGood(&g, num_);
+	//GOODS g = *(store->find(index_)); 
+	SaleGood good = SaleGood(store->find(index_), num_);
 	BuyList.push_back(good);
 	total += good.GetPrice() * num_;
 }
@@ -172,13 +176,6 @@ void CUSTOMER::cancel(int index_, int num_ = 1)
 			return;
 		}
 	cout << "Unkonwn Erro.Operation FAILED!\n";
-}
-void CUSTOMER::finish() const
-{
-	FirstLine();
-	for (int i = 0; i < BuyList.size(); i++)
-		BuyList[i].show();
-	cout << "Total: " << total << endl;
 }
 
 //STORE类
@@ -284,6 +281,7 @@ void STORE::change()
 			if (GoodList[i].GetIndex() == index_)
 			{
 				GoodList[i].ReName(name_);
+				cin.ignore(1024, '\n'); //清除缓存
 				return;
 			}
 		cout << "Unkonwn erro happened!Change FAILED!";
@@ -433,7 +431,8 @@ void ENGINE::customer()
 			continue;
 		if (h == 7)
 		{
-			customer.finish();
+			customer.show();
+			cout << "Thank you!\n";
 			break;
 		}
 		switch (h)
@@ -443,16 +442,16 @@ void ENGINE::customer()
 				break;
 			case 2: //add
 			{
-				int item[20][2], i = 0; //存放选择信息
-				cout << "FORM \"Index Num\"\nType \';\' to finishi add.\n->";
-				while (cin)
+				int item[20][2], i = 0, a; //存放选择信息
+				cout << "FORM \"Index, Num\"\nType \';\' to finishi add.\n->";
+				while (cin >> item[i][0])
 				{
-					cin >> item[i][0] >> item[i][1];
+					cin >> item[i][1];
 					i++;
 				}
 				cin.clear();
 				cin.get(); //重置输入流
-				for (int j = 0; j <= i; j++)
+				for (int j = 0; j < i; j++)
 					customer.add(item[j][0], item[j][1]);
 				break;
 			}
@@ -474,9 +473,6 @@ void ENGINE::customer()
 					customer.cancel(item[j][0], item[j][1]);
 				break;
 			}
-			case 7:
-				customer.finish();
-				break;
 			case 8:
 				CustomerHele();
 				break;

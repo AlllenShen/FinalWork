@@ -61,15 +61,14 @@ class CUSTOMER
 private:
 	vector<SaleGood> BuyList;
 	int total;
-	const STORE * store;
+	STORE * store; //错误的设计！为调用store中非const方法
 public:
-	CUSTOMER(const STORE * store_ = NULL) { store = store_; };
+	CUSTOMER(STORE * store_ = NULL) { store = store_; };
 	void show() const;
 	vector<SaleGood>::iterator * find(int index_); //返回迭代器指针
 	//void add(int index_,STORE * store_ = NULL, int num_ = 1);
 	void add(int index_, int num_);
 	void cancel(int index_, int num_);
-	void finish() const;
 };
 class ENGINE
 {

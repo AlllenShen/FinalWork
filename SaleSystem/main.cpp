@@ -18,8 +18,8 @@ int main()
 	{ 1, 1, 3, 4, 5, 6, 7, 8, 9, 10 };
 	for (int i = 0; i < 10; i++)
 			store.add(name[i], price[i], index[i]);
-	test(store, engine);
-	/*string cmd;
+	//test(store, engine);
+	string cmd;
 	cout << "Welcome! Type \"help\" to get help.";
 	while (1)
 	{
@@ -31,14 +31,15 @@ int main()
 			engine.customer();
 		if (cmd == "\\q")
 			return 0;
-	}*/
+	}
 	system("pause");
 }
 
 void test(STORE & store, ENGINE & engine)
 {
-	//store.delet();
+	/*store.delet();
 	vector<GOODS>::const_iterator * f = store.find(1);
 	int in = (**f).GetIndex();
-	const GOODS & g = **f;
+	const GOODS & g = **f;*/
+	store.change();
 }
