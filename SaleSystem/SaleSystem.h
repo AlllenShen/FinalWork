@@ -27,6 +27,7 @@ public:
 	string GetName() const { return name; };
 	int GetPrice() const { return price; };
 	int GetIndex() const { return index; };
+	bool operator==(const GOODS) const;
 };
 class STORE
 {

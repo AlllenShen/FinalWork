@@ -40,9 +40,23 @@ int handle(string cmd)
 	else
 		return -1;
 }
-void help()
+void SalerHelp()
 {
-	
+	cout << setw(10) << "\\q" << "Exit the mode.\n"
+		<< setw(10) << "show_goods" << "Show items in store.\n"
+		<< setw(10) << "add" << "Add item to store.\n"
+		<< setw(10) << "change" << "Change item in store.\n"
+		<< setw(10) << "delet" << "Delet item in store.\n"
+		<< setw(10) << "end" << "Finish and show item solde.\n";
+}
+void CustomerHele()
+{
+	cout << setw(10) << "\\q" << "Exit the mode.\n"
+		<< setw(10) << "show_goods" << "Show items in store.\n"
+		<< setw(10) << "show_chart" << "Show items in chart.\n"
+		<< setw(10) << "add" << "Add item to chart.\n"
+		<< setw(10) << "delet" << "Delet item in chart.\n"
+		<< setw(10) << "end" << "Finish and show items.\n";
 }
 
 //GOODS类
@@ -63,6 +77,15 @@ void GOODS::show() const
 	cout << setw(8) << index
 		<< setw(8) << name
 		<< setw(8) << price  << endl;
+}
+bool GOODS::operator==(const GOODS good) const
+{
+	if (this->index == good.GetIndex()
+		&& this->name == good.GetName()
+		&& this->price == good.GetPrice())
+		return true;
+	else
+		return false;
 }
 
 //SaleGood类
@@ -232,7 +255,7 @@ void STORE::change()
 		cin >> index_;
 		f = find(index_);
 	}
-	GOODS g = **f;//读取访问权限错误
+	GOODS g = **f;//读取访问权限错误 0xcccccccc
 	FirstLine();
 	g.show();
 	cout << "Which do you want to change?\nName(n) Price(p) Index(i)\n";
@@ -326,15 +349,18 @@ void STORE::delet()
 	cin >> index_;
 	bool flag = 0;
 	vector<GOODS>::iterator iter = GoodList.begin();
-	while (iter != GoodList.end())
+	vector<GOODS>::const_iterator * f = find(index_);
+	GOODS comp = **f; //读取访问权限冲突 
+	for (; iter != GoodList.end(); iter++)
 	{
-		if (iter == *find(index_))
+		if (*iter == comp) //exception here 
 		{
-			iter = GoodList.erase(iter); //delet
+			iter = GoodList.erase(iter); //delet 
 			flag = 1;
+			return;
 		}
-		else
-			iter++;
+		/*else
+			iter++;*/
 	}
 	if (flag == 0)
 		cout << "The item DOES NOT exist!\nPlease check index.\n";
@@ -373,7 +399,7 @@ void ENGINE::saler()
 			end();
 			break;
 		case 8:
-			cout << "help\n";
+			SalerHelp();
 			break;
 		}
 	}
@@ -436,8 +462,11 @@ void ENGINE::customer()
 					customer.cancel(item[j][0], item[j][1]);
 				break;
 			}
+			case 7:
+				customer.finish();
+				break;
 			case 8:
-				cout << "help\n";
+				CustomerHele();
 				break;
 		}
 	}
