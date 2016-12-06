@@ -35,7 +35,8 @@ private:
 	vector<GOODS> GoodList;
 public:
 	STORE() {};
-	vector<GOODS>::const_iterator * find(int index_) const; //返回迭代器指针
+	//vector<GOODS>::const_iterator * find(int index_) const; //返回迭代器指针
+	GOODS * find(int index_);
 	void show(int begin) const;
 	void add();
 	void add(string name_, int price_, int index_);

@@ -182,13 +182,24 @@ void CUSTOMER::finish() const
 }
 
 //STORE类
-vector<GOODS>::const_iterator * STORE::find(int index_) const
+
+//	this implementation will cause fatal exception
+//
+//vector<GOODS>::const_iterator * STORE::find(int index_) const
+//{
+//	vector<GOODS>::const_iterator iter = GoodList.begin();
+//	for (;iter != GoodList.end(); iter++)
+//		if ((*iter).GetIndex() == index_)
+//			return &iter;
+//	return NULL;
+//}
+
+GOODS * STORE::find(int index_)
 {
-	vector<GOODS>::const_iterator iter = GoodList.begin();
-	for (;iter != GoodList.end(); iter++)
-		if ((*iter).GetIndex() == index_)
-			return &iter;
-	return NULL;
+	for (int i = 0; i < GoodList.size(); i++)
+		if (GoodList[i].GetIndex() == index_)
+			return &GoodList[i];
+	return nullptr;
 }
 void STORE::show(int begin) const
 {
@@ -248,14 +259,15 @@ void STORE::change()
 	int index_;
 	cout << "Input the index of good:";
 	cin >> index_;
-	vector<GOODS>::const_iterator * f = find(index_);
+	//vector<GOODS>::const_iterator * f = find(index_);
+	GOODS * f = find(index_);
 	while (f == NULL) 
 	{
 		cout << "The index DOES NOT EXIST!\nPlease input another one:";
 		cin >> index_;
 		f = find(index_);
 	}
-	GOODS g = **f;//读取访问权限错误 0xcccccccc
+	GOODS g = *f;
 	FirstLine();
 	g.show();
 	cout << "Which do you want to change?\nName(n) Price(p) Index(i)\n";
@@ -349,12 +361,11 @@ void STORE::delet()
 	cin >> index_;
 	bool flag = 0;
 	vector<GOODS>::iterator iter = GoodList.begin();
-	vector<GOODS>::const_iterator * f = find(index_);
-	GOODS comp = **f; //读取访问权限冲突 
-	//int in = **f.
+	//vector<GOODS>::const_iterator * f = find(index_);
+	GOODS * f = find(index_);
 	for (; iter != GoodList.end(); iter++)
 	{
-		if (*iter == comp) //exception here 
+		if (index_ == (*f).GetIndex()) //exception here 
 		{
 			iter = GoodList.erase(iter); //delet 
 			flag = 1;
