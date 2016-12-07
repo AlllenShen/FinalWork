@@ -37,9 +37,5 @@ int main()
 
 void test(STORE & store, ENGINE & engine)
 {
-	/*store.delet();
-	vector<GOODS>::const_iterator * f = store.find(1);
-	int in = (**f).GetIndex();
-	const GOODS & g = **f;*/
 	store.change();
 }

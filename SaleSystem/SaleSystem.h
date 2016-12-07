@@ -70,6 +70,8 @@ public:
 	SaleGood * find(int index_);
 	void add(int index_, int num_);
 	void cancel(int index_, int num_);
+	vector<SaleGood> & GetList() { return BuyList; };
+	int GetTotal() { return total; };
 };
 class ENGINE
 {
@@ -83,5 +85,8 @@ public:
 	void saler();
 	void customer();
 	void end() const;
+	void AddToStore(CUSTOMER & cus);
+	//void DeletFromStore(const CUSTOMER & cus, int index_, int num_);
+
 };
 #endif

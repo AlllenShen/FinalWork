@@ -367,11 +367,16 @@ void STORE::delet()
 	cin >> index_;
 	bool flag = 0;
 	vector<GOODS>::iterator iter = GoodList.begin();
-	//vector<GOODS>::const_iterator * f = find(index_);
 	GOODS * f = find(index_);
+	if (f == NULL)
+	{
+		cout << "The item with index:" << index_
+			<< " does NOT exist.\n";
+		return;
+	}
 	for (; iter != GoodList.end(); iter++)
 	{
-		if (index_ == (*f).GetIndex()) //exception here 
+		if ((*iter).GetIndex() == (*f).GetIndex())  
 		{
 			iter = GoodList.erase(iter); //delet 
 			flag = 1;
@@ -439,6 +444,7 @@ void ENGINE::customer()
 			continue;
 		if (h == 7)
 		{
+			AddToStore(customer);
 			customer.show();
 			cout << "Thank you!\n";
 			break;
@@ -493,6 +499,13 @@ void ENGINE::end() const
 	for (int i = 0; i < SaleList.size(); i++)
 		SaleList[i].show();
 	cout << "Total: " << total << endl;
+}
+void ENGINE::AddToStore(CUSTOMER & cus)
+{
+	vector<SaleGood> & BuyList = cus.GetList();
+	for (int i = 0; i < BuyList.size(); i++)
+		SaleList.push_back(BuyList[i]);
+	total += cus.GetTotal();
 }
 void ENGINE::ShowGoods() const
 {
