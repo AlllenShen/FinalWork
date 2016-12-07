@@ -55,6 +55,7 @@ public:
 	virtual void show() const;
 	void add(int num_ = 1) { num = num_; };
 	void cancel(int num_);
+	int GetNum() {return num;};
 };
 class CUSTOMER
 {
@@ -65,8 +66,8 @@ private:
 public:
 	CUSTOMER(STORE * store_ = NULL) { store = store_; };
 	void show() const;
-	vector<SaleGood>::iterator * find(int index_); //返回迭代器指针
-	//void add(int index_,STORE * store_ = NULL, int num_ = 1);
+	//vector<SaleGood>::iterator * find(int index_); //返回迭代器指针
+	SaleGood * find(int index_);
 	void add(int index_, int num_);
 	void cancel(int index_, int num_);
 };

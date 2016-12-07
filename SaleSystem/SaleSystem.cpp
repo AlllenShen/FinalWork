@@ -42,21 +42,21 @@ int handle(string cmd)
 }
 void SalerHelp()
 {
-	cout << setw(10) << "\\q" << "Exit the mode.\n"
-		<< setw(10) << "show_goods" << "Show items in store.\n"
-		<< setw(10) << "add" << "Add item to store.\n"
-		<< setw(10) << "change" << "Change item in store.\n"
-		<< setw(10) << "delet" << "Delet item in store.\n"
-		<< setw(10) << "end" << "Finish and show item solde.\n";
+	cout << setw(15) << "\\q" << "Exit the mode.\n"
+		<< setw(15) << "show_goods" << "Show items in store.\n"
+		<< setw(15) << "add" << "Add item to store.\n"
+		<< setw(15) << "change" << "Change item in store.\n"
+		<< setw(15) << "delet" << "Delet item in store.\n"
+		<< setw(15) << "end" << "Finish and show item solde.\n";
 }
 void CustomerHele()
 {
-	cout << setw(10) << "\\q" << "Exit the mode.\n"
-		<< setw(10) << "show_goods" << "Show items in store.\n"
-		<< setw(10) << "show_chart" << "Show items in chart.\n"
-		<< setw(10) << "add" << "Add item to chart.\n"
-		<< setw(10) << "delet" << "Delet item in chart.\n"
-		<< setw(10) << "end" << "Finish and show items.\n";
+	cout << setw(15) << "\\q" << "Exit the mode.\n"
+		<< setw(15) << "show_goods" << "Show items in store.\n"
+		<< setw(15) << "show_chart" << "Show items in chart.\n"
+		<< setw(15) << "add" << "Add item to chart.\n"
+		<< setw(15) << "delet" << "Delet item in chart.\n"
+		<< setw(15) << "end" << "Finish and show items.\n";
 }
 
 //GOODS类
@@ -107,8 +107,9 @@ void SaleGood::cancel(int num_ = 1)
 	if (num_ > num)
 	{
 		cout << "There are only " << num
-			<< "\nAre you sure to do?We'll clear ALL!(Y/N)";
+			<< "\nAre you sure to do?We'll clear ALL!(Y/N)\n";
 		char c = '\0';
+		cin >> c;
 		if (c == 'Y' || c == 'y')
 		{
 			num = 0;
@@ -134,26 +135,26 @@ void CUSTOMER::show() const
 		BuyList[i].show();
 	cout << "Total:" << total << endl;
 }
-vector<SaleGood>::iterator * CUSTOMER::find(int index_)
+SaleGood * CUSTOMER::find(int index_)
 {
-	vector<SaleGood>::iterator iter = BuyList.begin();
-	for (; iter != BuyList.end(); iter++)
-		if ((*iter).GetIndex() == index_)
-			return &iter;
+	for (int i = 0; i < BuyList.size(); i++)
+		if (BuyList[i].GetIndex() == index_)
+			return &BuyList[i];
 	return NULL;
 }
 void CUSTOMER::add(int index_, int num_)
 {
 	if (store->find(index_) == NULL)
 	{
-		cout << "The good \"" << index_
-			<< "\" DOES NOT exist!\nPlease check if index is right.\n";
+		cout << "The good with index:" << index_
+			<< " DOES NOT exist!\nPlease check if index is right.\n";
 		return;
 	}
-	vector<SaleGood>::iterator * item = find(index_);
+	//vector<SaleGood>::iterator * item = find(index_);
+	SaleGood * item = find(index_);
 	if (item != NULL)
 	{
-		(**item).add(num_);
+		(*item).add(num_);
 		return;
 	}
 	//GOODS g = *(store->find(index_)); 
@@ -171,8 +172,10 @@ void CUSTOMER::cancel(int index_, int num_ = 1)
 	for (int i=0; i < BuyList.size(); i++)
 		if (BuyList[i].GetIndex() == index_)
 		{
+			int pnum = BuyList[i].GetNum(); //减少前的个数
 			BuyList[i].cancel(num_);
-			total -= int(BuyList[i].GetPrice()) * num_;
+			int rnum = BuyList[i].GetNum();
+			total -= BuyList[i].GetPrice() * (pnum - rnum);
 			return;
 		}
 	cout << "Unkonwn Erro.Operation FAILED!\n";
@@ -306,6 +309,11 @@ void STORE::change()
 		int NewIndex;
 		cout << "New index:";
 		cin >> NewIndex;
+		while (find(NewIndex) != NULL)
+		{
+			cout << "The index has already existed.\nIndex:";
+			cin >> NewIndex;
+		}
 		for (int i = 0; i < GoodList.size(); i++)
 			if (GoodList[i].GetIndex() == index_)
 			{
@@ -462,14 +470,14 @@ void ENGINE::customer()
 			{
 				int item[20][2], i = 0; //存放选择信息
 				cout << "FORM \"Index Num\"\nType \';\' to finishi delet.\n->";
-				while (cin)
+				while (cin >> item[i][0])
 				{
-					cin >> item[i][0] >> item[i][1];
+					cin >> item[i][1];
 					i++;
 				}
 				cin.clear();
 				cin.get(); //重置输入流
-				for (int j = 0; j <= i; j++)
+				for (int j = 0; j < i; j++)
 					customer.cancel(item[j][0], item[j][1]);
 				break;
 			}
